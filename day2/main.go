@@ -9,7 +9,8 @@ import (
 
 func main() {
 	passwordSpecifications := util.ReadInput("day2/input.txt")
-	validPasswordsFound := 0
+	validPasswordsFoundPart1 := 0
+	validpasswordsFoundPart2 := 0
 	for _, input := range passwordSpecifications {
 
 		floor, ceil, letter, password, err := parsePasswordSpecification(input)
@@ -19,12 +20,17 @@ func main() {
 			os.Exit(1)
 		}
 
-		if passwordIsValid(floor, ceil, letter, password) {
-			validPasswordsFound++
+		if passwordIsValidPart1(floor, ceil, letter, password) {
+			validPasswordsFoundPart1++
+		}
+
+		if passwordIsValidPart2(floor, ceil, letter, password) {
+			validpasswordsFoundPart2++
 		}
 	}
 
-	fmt.Printf("Found %d valid passwords\n", validPasswordsFound)
+	fmt.Printf("Found %d valid passwords for the first Policy\n", validPasswordsFoundPart1)
+	fmt.Printf("Found %d valid passwords for the second Policy\n", validpasswordsFoundPart2)
 }
 
 func parsePasswordSpecification(spec string) (int, int, string, string, error) {
@@ -44,7 +50,11 @@ func countLettersInPassword(letter string, password string) int {
 	return strings.Count(password, letter)
 }
 
-func passwordIsValid(floor int, ceil int, letter string, password string) bool {
+func passwordIsValidPart1(floor int, ceil int, letter string, password string) bool {
 	letterOccurrence := countLettersInPassword(letter, password)
 	return floor <= letterOccurrence && letterOccurrence <= ceil
+}
+
+func passwordIsValidPart2(floor int, ceil int, letter string, password string) bool {
+	return (password[floor-1] == letter[0]) != (password[ceil-1] == letter[0])
 }
