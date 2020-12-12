@@ -19,40 +19,30 @@ func calculateAdapterCombinations(adaptersInBag []int) int {
 	adapters := append([]int{0}, adaptersInBag...)
 	joltageJumps := calculateJoltageJumps(adapters)
 
-	combinationsToConnectAdapter := make([]int, len(joltageJumps))
+	combinationsToConnectAdapterSum := make([]int, len(joltageJumps))
+	combinationsToConnectAdapterSum[0] = 1
 
-	for i := len(joltageJumps) - 1; i >= 0; i-- {
-		combinations := 0
-		for j := i; j > (i - 3); j-- {
-			if (j > 0 && joltageJumps[j] == 1) || j < 0 {
-				combinations++
+	for i := 1; i < len(joltageJumps); i++ {
+		// the adapter must be reached from the adapter in front
+		combinationsToConnectAdapterSum[i] = combinationsToConnectAdapterSum[i-1]
+
+		if joltageJumps[i] != 1 {
+			// this adapter can only be reached with a 3 jump there is only a direct connection
+			continue
+		}
+
+		for j := i - 1; j > (i - 3); j-- {
+			if j > 0 && joltageJumps[j] == 1 {
+				// the adapter on position J in front of us could be jumped
+				// so we take the combinations of the adapter j-i also into consideration
+				combinationsToConnectAdapterSum[i] += combinationsToConnectAdapterSum[j-1]
 			} else {
 				break
 			}
 		}
-
-		if combinations == 0 {
-			combinations = 1
-		}
-		combinationsToConnectAdapter[i] = combinations
-	}
-
-	combinationsToConnectAdapterSum := make([]int, len(joltageJumps))
-	combinationsToConnectAdapterSum[0] = 1
-
-	for index, combination := range combinationsToConnectAdapter[1:] {
-
-		if combination == 1 {
-			combinationsToConnectAdapterSum[index+1] = combinationsToConnectAdapterSum[index]
-		} else if combination == 2 {
-			combinationsToConnectAdapterSum[index+1] = combinationsToConnectAdapterSum[index] + combinationsToConnectAdapterSum[index-1]
-		} else if combination == 3 {
-			combinationsToConnectAdapterSum[index+1] = combinationsToConnectAdapterSum[index] + combinationsToConnectAdapterSum[index-1] + combinationsToConnectAdapterSum[index-2]
-		}
 	}
 
 	return combinationsToConnectAdapterSum[len(joltageJumps)-1]
-
 }
 
 func calculateJoltageJumps(adapters []int) []int {
