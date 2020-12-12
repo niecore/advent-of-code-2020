@@ -5,6 +5,7 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+	"strconv"
 )
 
 func ReadInput(path string) []string {
@@ -26,4 +27,13 @@ func ReadInput(path string) []string {
 	}
 
 	return lines
+}
+
+func ReadInputAsInts(path string) []int {
+	var retval []int
+	for _, input := range ReadInput(path) {
+		param, _ := strconv.ParseInt(input, 0, 32)
+		retval = append(retval, int(param))
+	}
+	return retval
 }

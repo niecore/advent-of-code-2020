@@ -37,3 +37,13 @@ func FindMinMax(numbers []int) (int, int) {
 
 	return min, max
 }
+
+func CountItem(list []int, sum int) int {
+	count := 0
+	for _, i := range list {
+		if i == sum {
+			count++
+		}
+	}
+	return count
+}

@@ -2,7 +2,6 @@ package main
 
 import (
 	"../util"
-	"strconv"
 )
 
 func main() {
@@ -38,10 +37,5 @@ func getFirstInvalidNumber(numbers []int) int {
 }
 
 func parseXmasCode(file string) []int {
-	var xmasCode []int
-	for _, input := range util.ReadInput(file) {
-		param, _ := strconv.ParseInt(input, 0, 32)
-		xmasCode = append(xmasCode, int(param))
-	}
-	return xmasCode
+	return util.ReadInputAsInts(file)
 }
