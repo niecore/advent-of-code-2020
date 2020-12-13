@@ -47,3 +47,10 @@ func CountItem(list []int, sum int) int {
 	}
 	return count
 }
+
+func Abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
