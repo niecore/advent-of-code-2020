@@ -1,6 +1,13 @@
 package main
 
 import (
+  "awesomeProject/util"
+  "strconv"
+)
+
+]
+
+import (
   "../util"
   "fmt"
   "os"
