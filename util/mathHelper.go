@@ -48,6 +48,16 @@ func CountItem(list []int, sum int) int {
 	return count
 }
 
+func CountValid(list []bool) int {
+	count := 0
+	for _, i := range list {
+		if i {
+			count++
+		}
+	}
+	return count
+}
+
 func Abs(x int) int {
 	if x < 0 {
 		return -x
