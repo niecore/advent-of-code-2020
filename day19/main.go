@@ -2,7 +2,6 @@ package main
 
 import (
 	"../util"
-	"fmt"
 	"strconv"
 	"strings"
 )
@@ -20,13 +19,18 @@ type Rules map[int]Rule
 func main() {
 	// parse input
 	inputFile := util.ReadInput("day19/input.txt")
+
 	rules := parseRules(inputFile)
 	messages := parseMessages(inputFile)
+
+	// remove for part 1
+	rules[8] = Rule{idx: 8, options: [][]int{[]int{42}, []int{42, 8}}}
+	rules[11] = Rule{idx: 11, options: [][]int{[]int{42, 31}, []int{42, 11, 31}}}
+	// end remove
 
 	count := 0
 	for _, message := range messages {
 		valid := isMessageValid(message, rules)
-		println(valid)
 		if valid {
 			count++
 		}
@@ -35,38 +39,39 @@ func main() {
 }
 
 func isMessageValid(message string, rules Rules) bool {
-	valid, parsed := checkRule(message, rules, rules[0], 0)
-	return valid && parsed == len(message)
+	return checkRule(message, rules, []int{0})
 }
 
-func checkRule(message string, rules Rules, rule Rule, pos int) (bool, int) {
-	if rule.letter != "" {
-		if pos <= len(message) && rule.letter[0] == message[pos] {
-			return true, 1
-		} else {
-			return false, 0
-		}
-	}
-	for _, option := range rule.options {
-		parsed := 0
-		valid := true
-		for _, ruleIdx := range option {
-			newRule := rules[ruleIdx]
-			ok, parsedNew := checkRule(message, rules, newRule, pos+parsed)
+func checkRule(message string, rules Rules, seq []int) bool {
 
-			if !ok {
-				valid = false
-				break
-			} else {
-				parsed += parsedNew
+	if len(message) == 0 && len(seq) == 0 {
+		return true
+	} else if len(message) == 0 || len(seq) == 0 {
+		return false
+	}
+
+	rule0, _ := rules[seq[0]]
+	newSeq := seq[1:]
+
+	// this part applies only when we are looking at a base rules
+	if rule0.letter != "" {
+		if rule0.letter[0] == message[0] {
+			return checkRule(message[1:], rules, newSeq)
+		} else {
+			return false
+		}
+	} else {
+		for _, option := range rule0.options {
+
+			if option == nil {
+				continue
+			}
+			if checkRule(message, rules, append(option, newSeq...)) {
+				return true
 			}
 		}
-		if valid {
-			fmt.Printf("rule number %d parsed %d bytes to pos %d\n", rule.idx, parsed, pos+parsed)
-			return true, parsed
-		}
 	}
-	return false, 0
+	return false
 }
 
 func parseMessages(file []string) []string {
